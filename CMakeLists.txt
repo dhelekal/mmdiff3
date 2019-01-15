@@ -1,25 +1,50 @@
 cmake_minimum_required(VERSION 3.12)
 project(mmdiff3)
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
-set(OpenMP_CXX_FLAGS "-Xclang -fopenmp")
-set(OpenMP_C_FLAGS "-Xclang -fopenmp")
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_VERBOSE_MAKEFILE 1)
 
-find_package(OpenMP REQUIRED)
+message(STATUS "The build directory is ${CMAKE_SOURCE_DIR}")
 
-if(NOT TARGET OpenMP::OpenMP_CXX)
-    add_library(OpenMP_TARGET INTERFACE)
-    add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
-    target_compile_options(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-    find_package(Threads REQUIRED)
-    target_link_libraries(OpenMP_TARGET INTERFACE Threads::Threads)
-    target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
+find_package(OpenMP)
+if(OpenMP_FOUND)
+    message(STATUS "OpenMP Found")
+
+    set(OpenMP_CXX_FLAGS "-Xclang -fopenmp")
+    set(OpenMP_C_FLAGS "-Xclang -fopenmp")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
+
+    if(NOT TARGET OpenMP::OpenMP_CXX)
+        add_library(OpenMP_TARGET INTERFACE)
+        add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
+        target_compile_options(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
+        find_package(Threads REQUIRED)
+        target_link_libraries(OpenMP_TARGET INTERFACE Threads::Threads)
+        target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
+    endif()
+    list(APPEND LINK_LIBRARIES OpenMP::OpenMP_CXX)
+else()
+    message(STATUS "Failed to locate OpenMP, proceeding without")
 endif()
 
-find_package (Eigen3 3.3 REQUIRED NO_MODULE)
+set(SOURCES mmdiff_3.cpp mmdiff_3.hpp mmd.hpp kernel_function.hpp rbf_joint_kernel.hpp rbf_joint_kernel.cpp mmd.cpp)
 
-add_library(mmdiff3 SHARED main.cpp mmdiff_3.cpp mmdiff_3.hpp)
-add_executable(main main.cpp)
+find_package(LibR REQUIRED)
+message(STATUS "Including Rlib directories ${LIBR_INCLUDE_DIRS}")
+include_directories(
+        ${LIBR_INCLUDE_DIRS}
+)
 
-target_link_libraries(mmdiff3 PUBLIC OpenMP::OpenMP_CXX Eigen3::Eigen)
+add_library(mmdiff3 SHARED ${SOURCES})
+target_link_libraries(mmdiff3 PRIVATE ${LIBR_LIBRARIES} ${LINK_LIBRARIES})
+
+set_target_properties(mmdiff3 PROPERTIES COMPILE_FLAGS "-ggdb")
+set_target_properties(mmdiff3 PROPERTIES PREFIX "")
+
+if(NOT WIN32) # Need to force .so on Mac, but Windows needs to be .dll
+    set_target_properties(mmdiff3 PROPERTIES SUFFIX ".so")
+    install(TARGETS mmdiff3 LIBRARY DESTINATION . )
+else(NOT WIN32)
+    install(TARGETS mmdiff3 RUNTIME DESTINATION . )
+endif(NOT WIN32)

@@ -1,0 +1,35 @@
+RBIN := "${R_HOME}/bin/R"
+
+CXX := $(shell ${RBIN} CMD config CXX)
+CXX_BIN := $(firstword ${CXX})
+CXX_FLAGS := $(shell ${RBIN} CMD config CXXFLAGS)
+CXX_ARGS := $(filter-out $(CXX_BIN), $(CXX)) ${CXX_FLAGS}
+
+SHLIB_CXXLD := $(shell ${RBIN} CMD config SHLIB_CXXLD)
+SHLIB_CXXLD_BIN := $(firstword ${SHLIB_CXXLD})
+SHLIB_CXXLD_ARGS := $(filter-out $(SHLIB_CXXLD_BIN), $(SHLIB_CXXLD)) 
+LDFLAGS := $(shell ${RBIN} CMD config LDFLAGS)
+SHLIB_CXXLDFLAGS := $(shell ${RBIN} CMD config SHLIB_CXXLDFLAGS)
+
+SHARED_LINKER_FLAGS = ${SHLIB_CXXLD_ARGS} ${LDFLAGS} ${SHLIB_CXXLDFLAGS}
+EXE_LINKER_FLAGS = ${SHLIB_CXXLD_ARGS} ${LDFLAGS}
+MODULE_LINKER_FLAGS = ${SHLIB_CXXLD_ARGS} ${LDFLAGS}
+
+CMAKE_ARGS += -DR_CXX="${CXX_BIN}" \
+	      -DCMAKE_CXX_FLAGS="${CXX_ARGS}" \
+	      -DCMAKE_SHARED_LINKER_FLAGS="${SHARED_LINKER_FLAGS}"
+		  
+all:
+	mkdir -p ../src-build;
+	cd ../src-build; \
+	${CMAKE} ../src $(CMAKE_ARGS) \
+	      -DCMAKE_INSTALL_PREFIX=../src \
+	      -DR_INCLUDES=${R_INCLUDE_DIR}; \
+	make install
+	cd ../src; \
+	echo "tools:::.shlib_objects_symbol_tables()" | \
+          $(R_HOME)/bin/R --vanilla --slave --args `ls *.o`
+
+clean:
+	rm -rf ../src-build
+	rm -rf ../inst/local
