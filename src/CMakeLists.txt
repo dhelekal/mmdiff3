@@ -7,7 +7,7 @@ set(CMAKE_VERBOSE_MAKEFILE 1)
 
 message(STATUS "The build directory is ${CMAKE_SOURCE_DIR}")
 
-find_package(OpenMP)
+find_package(OPENMP)
 if(OpenMP_FOUND)
     message(STATUS "OpenMP Found")
 
@@ -28,13 +28,11 @@ else()
     message(STATUS "Failed to locate OpenMP, proceeding without")
 endif()
 
-set(SOURCES mmdiff_3.cpp mmdiff_3.hpp mmd.hpp kernel_function.hpp rbf_joint_kernel.hpp rbf_joint_kernel.cpp mmd.cpp)
+set(SOURCES mmd.hpp kernel_function.hpp rbf_joint_kernel.hpp rbf_joint_kernel.cpp mmd.cpp mmdiff3.cpp R_init.cpp mmdiff3.hpp R_init.hpp)
 
 find_package(LibR REQUIRED)
 message(STATUS "Including Rlib directories ${LIBR_INCLUDE_DIRS}")
-include_directories(
-        ${LIBR_INCLUDE_DIRS}
-)
+include_directories( PRIVATE ${LIBR_INCLUDE_DIRS})
 
 add_library(mmdiff3 SHARED ${SOURCES})
 target_link_libraries(mmdiff3 PRIVATE ${LIBR_LIBRARIES} ${LINK_LIBRARIES})

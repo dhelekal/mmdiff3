@@ -34,3 +34,6 @@
 .idea/
 cmake-build-debug/
 .DS_Store
+.Rproj.user
+.RData
+.Rhistory

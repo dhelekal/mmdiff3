@@ -12,10 +12,10 @@
 namespace mmdiff3 {
     template<class T>
     double mmd<T>::compute_mmd(std::vector<T> &x, std::vector<T> &y, kernel_function<T> &k) {
-        double p = kernel_sum(x, x, k), q = kernel_sum(y, y, k), pq = kernel_sum(x, y, k);
+        double p = kernel_sum(x, x, k, true), q = kernel_sum(y, y, k, true), pq = kernel_sum(x, y, k, false);
         size_t m = x.size();
         size_t n = y.size();
-        return (1. / (m * m)) * p - (2. / (m * n)) * pq + (1. / (n * n)) * q;
+        return (1. / (m * (m-1))) * p - (2. / (m * n)) * pq + (1. / (n * (n-1))) * q;
     }
 
     template<class T>
@@ -28,26 +28,39 @@ namespace mmdiff3 {
     }
 
     template<class T>
-    double mmd<T>::kernel_sum(std::vector<T> &x, std::vector<T> &y, kernel_function<T> &k) {
+    double mmd<T>::kernel_sum(std::vector<T> &x,
+            std::vector<T> &y,
+            kernel_function<T> &k,
+            bool no_diag) {
         size_t m = x.size();
         size_t n = y.size();
 
         double result = 0;
         int i = 0;
+        int j = 0;
 
 #if defined(_OPENMP)
-#pragma omp parallel for \
-        default(shared) private(i) \
+#pragma omp parallel for collapse(2) \
+        default(shared) \
+        private(i,j) \
         schedule(static, 100) \
         reduction(+:result)
 
-        for (i = 0; i < (m * n); ++i) {
-            result = result + k.compute_kernel(x[i / n], y[i % m]);
+        for(i=0; i < m; ++i){
+            for(j=0; j < n; ++j){
+                double k_res;
+                (no_diag && i==j) ? (k_res = 0) : (k_res = k.compute_kernel(x[i], y[j]));
+                result = result + k_res;
+            }
         }
 #else
-        for (i = 0; i < (m * n); ++i) {
-                result = result + k.compute_kernel(x[i / n], y[i % m]);
+        for(i=0; i < m; ++i){
+            for(j=0; j < n; ++j){
+                double k_res;
+                (no_diag && i==j) ? (k_res = 0) : (k_res = k.compute_kernel(x[i], y[j]));
+                result = result + k_res;
             }
+        }
 #endif
         return result;
     }

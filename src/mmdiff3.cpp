@@ -2,13 +2,24 @@
 // Created by David Helekal on 23/10/2018.
 //
 
-#include "mmdiff_3.hpp"
+#ifndef MMDIFF3_MMDIFF_3_CPP
+#define MMDIFF3_MMDIFF_3_CPP
+
+#import "mmdiff3.hpp"
+
+#include <R.h>
+#include <R_ext/Rdynload.h>
+#include <Rinternals.h>
+
+#include <stdlib.h>
+#include <tuple>
+#include <vector>
 #include "rbf_joint_kernel.hpp"
 #include "mmd.hpp"
-#include <vector>
 
-namespace mmdiff3 {
-    SEXP mmdiff3::compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP sigma) {
+using namespace mmdiff3;
+
+SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP sigma) {
         double *ra1 = REAL(a1);
         int *ia2 = INTEGER(a2);
 
@@ -34,5 +45,5 @@ namespace mmdiff3 {
         REAL(ans)[0] = run_mmd.compute_mmd(vec1, vec2, ker);
         UNPROTECT(1);
         return ans;
-    }
 }
+#endif //MMDIFF3_MMDIFF_3_HPP

@@ -19,7 +19,10 @@ namespace mmdiff3 {
         double compute_mmd(std::vector<T> &x, std::vector<T> &y, kernel_function<T> &k);
 
     private:
-        double kernel_sum(std::vector<T> &x, std::vector<T> &y, kernel_function<T> &k);
+        inline double kernel_sum(std::vector<T> &x,
+                std::vector<T> &y,
+                kernel_function<T> &k,
+                bool no_diag = false);
     };
 }
 #endif //MMDIFF3_MMD_HPP
