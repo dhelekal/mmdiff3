@@ -5,6 +5,10 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_VERBOSE_MAKEFILE 1)
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+
 message(STATUS "The build directory is ${CMAKE_SOURCE_DIR}")
 
 find_package(OPENMP)

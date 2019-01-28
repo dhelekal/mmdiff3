@@ -91,15 +91,6 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     rm(Counts.n)
   }
   # flanking regions
-#######DELETE 
-  set.seed(1236436)
-  Flanks <- vector(mode='list',length=ncol(Counts))
-  names(Flanks) <- colnames(Counts)
-  for (i in 1:ncol(Counts)){
-    N <- median(Counts[,i]/width(Peaks)*PeakBoundary)
-    Flanks[[i]] <- sample(PeakBoundary,N,replace=TRUE)
-  }
-
   nSamples <- numSamples(MD)
   sampleIDs <- Samples(MD)$SampleID
 
@@ -144,10 +135,6 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
   }
 
   if (dist.method=='MMD'){
-    KernelMatrix <- Meta$AnaData$KernelMatrix
-    if (!is.null(KernelMatrix)){
-      message('using previously computed KernelMatrix')
-    } else {
 
       ## ----------------
       ## 1. estimate sigma
@@ -174,16 +161,9 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
       ## ----------------
 
       message('pre-computing Kernel matrix...')
-      L <- max(width(Peaks))+2*PeakBoundary
-      KernelMatrix <- compKernelMatrix(seq(1,L),sigma)
-
-      Meta$AnaData$Flanks <- Flanks
       Meta$AnaData$MMDKernelSigma <- Sigma
       Meta$AnaData$MMDKernelFinalSigma <- sigma
-      Meta$AnaData$KernelMatrix <- KernelMatrix
-
       MD@MetaData <- Meta
-    }
   } #end if (dist.method=='MMD')
 
 
@@ -194,8 +174,6 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
 
   message(paste('computing', nComps ,'pair-wise distances...'))
   CompNames <- paste(CompIDs[1,],CompIDs[2,],sep=' vs ')
-  #D <- matrix(NA,length(Peaks),nComps)
-
 
   Data <- lapply(seq_len(nComps),
                  function(i){list('i1' = CompIDs[1,i],
@@ -211,25 +189,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
 
     D <- bplapply(Data, mmdWrapper,BPPARAM=BPPARAM,verbose=0,MD=MD.small,
                     dist.method=dist.method)
-
-
-  } else {
-    D <- vector(mode='list',length=nComps)
-    for (i in 1:nComps){
-      if (verbose>0){
-        message(paste('computing distances for',
-                      CompIDs[1,i],'vs',  CompIDs[2,i]))
-      }
-
-
-
-      D[[i]] <- mmdWrapper(Data[[i]],verbose=1,MD=MD.small,
-                           dist.method=dist.method)
-    } # end loop over comps
   }
-  #D.L[is.na(D.L)] = D.R[is.na(D.L)]
-  #D.R[is.na(D.R)] = D.L[is.na(D.R)]
-  #DISTs <- (D.L+D.R)/2
   DISTs <- matrix(NA,length(Peaks),nComps)
   for (i in 1:nComps){
     DISTs[,i] <- D[[i]]

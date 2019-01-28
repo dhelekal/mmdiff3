@@ -14,7 +14,7 @@ namespace mmdiff3 {
         this->sigma = sigma;
     }
 
-    double rbf_joint_kernel::compute_kernel(std::tuple<double, int> &a, std::tuple<double, int> &b) const {
+    inline double rbf_joint_kernel::compute_kernel(std::tuple<double, int> &a, std::tuple<double, int> &b) const {
         double pos_a;
         int cat_a;
 
