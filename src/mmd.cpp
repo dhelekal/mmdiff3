@@ -36,8 +36,8 @@ namespace mmdiff3 {
         size_t n = y.size();
 
         double result = 0;
-        int i = 0;
-        int j = 0;
+        size_t i = 0;
+        size_t j = 0;
 
 #if defined(_OPENMP)
 #pragma omp parallel for collapse(2) \

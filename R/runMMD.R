@@ -1,4 +1,7 @@
-computeDist <- function(ds1, ds2, bootstrap_n, n_background){
+computeDist <- function(ds1, ds2, bootstrap_n, n_background_1, n_background_2){ #####Call this. 
+  ###ds1, ds2 is data
+  ###boot_strap is how subsamples to be passed to mmd
+  ###n_background_1, n_background_2 how much contrast should be added
   #######normalise data
   ds1_r <-rescale(ds1)
   ds2_r <-rescale(ds2)
@@ -6,8 +9,8 @@ computeDist <- function(ds1, ds2, bootstrap_n, n_background){
   #### estimate sigma here
   sigma_est <- 1.0
   #### create joint, augument with noise
-  ds1_augumented <- ds_fg
-  ds2_augumented <- ds_bg
+  ds1_augumented <- createJoint(ds1_r, n_background_1)
+  ds2_augumented <- createJoint(ds2_r, n_background_2)
   
   sample1 <- ds1_augumented[sample(nrow(df), bootstrap_n, replace = TRUE), ]
   sample2 <- ds2_augumented[sample(nrow(df), bootstrap_n, replace = TRUE), ]
@@ -18,7 +21,7 @@ computeDist <- function(ds1, ds2, bootstrap_n, n_background){
 }
 
 createJoint <- function(ds, n_background){
-  rand_noise <- runif(n_background, min = 0, max = 1)
+  rand_noise <- runif(n_background, min = -1, max = 1)
   
   ds_fg <- data.frame(positions=ds, obs_type=1)
   ds_bg <- data.frame(positions=rand_noise, obs_type=0)
@@ -26,8 +29,6 @@ createJoint <- function(ds, n_background){
   ds_augumented<- merge(ds_fg, ds_bg)
   return(ds_augumented)
 }
-
-
 
 runMMD <- function(joint_ds1, joint_ds2, sigma){
   
@@ -50,5 +51,7 @@ runMMD <- function(joint_ds1, joint_ds2, sigma){
 }
 
 rescale <- function(x){
-  return((x-mean(x))/(max(x)-min(x)))
+  minx <-min(x)
+  maxx <-max(x)
+  return((x-mean(x))/(maxx-minxx))
 }
