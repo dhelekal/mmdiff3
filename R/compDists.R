@@ -99,6 +99,19 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     N <- median(Counts[,i]/width(Peaks)*PeakBoundary)
     Flanks[[i]] <- sample(PeakBoundary,N,replace=TRUE)
   }
+  
+  ### Mark Intensity
+  
+  NegativeContrast <- vector(mode='list',length=ncol(Counts))
+  names(NegativeContrast) <- colnames(Counts)
+  
+  for (i in 1:ncol(Counts)){
+    N <- median(Counts[,i]/width(Peaks)*PeakBoundary)
+    #### Yeah i dont know how to estimate N properly ATM @TODO
+    NegativeContrast[[i]] <- N
+  }
+  
+  ###
 
   nSamples <- numSamples(MD)
   sampleIDs <- Samples(MD)$SampleID
@@ -332,6 +345,8 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       stop('needs checking and fixing')
       KS <- ks.test(Data$posA,Data$posB)
       D[j] <- KS$statistic
+    } else if (dist.method=='MMD2'){
+      computeDist(Data$posA, Data$posB, 5000, NegativeContrast[[i1]], NegativeContrast[[i2]])
     }
   }
   return(D)
