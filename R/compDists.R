@@ -155,7 +155,11 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
       CompIDxs[2,j] = which(sampleIDs==CompIDs[2,j])
     }
   }
-
+  
+  if(dist.method = 'MMD2'{
+    Meta$AnaData$NegativeContrast <- NegativeContrast
+  })
+  
   if (dist.method=='MMD'){
     KernelMatrix <- Meta$AnaData$KernelMatrix
     if (!is.null(KernelMatrix)){
@@ -322,6 +326,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
 
   KernelMatrix <- Meta$AnaData$KernelMatrix
   Flanks <- Meta$AnaData$Flanks
+  NegativeContrast <- Meta$AnaData$NegativeContrast
 
 
 

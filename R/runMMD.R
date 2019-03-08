@@ -53,5 +53,5 @@ runMMD <- function(joint_ds1, joint_ds2, sigma){
 rescale <- function(x){
   minx <-min(x)
   maxx <-max(x)
-  return((x-mean(x))/(maxx-minxx))
+  return((x-mean(x))/(maxx-minx))
 }

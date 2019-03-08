@@ -356,7 +356,7 @@ getReads <- function(Data, bam.file, pairedEnd, PeakBoundary,filter.duplicates){
     }
   }
 
-  which <- RangesList(IRanges(start(Peaks), end(Peaks)))
+  which <- IRangesList(IRanges(start(Peaks), end(Peaks)), compress=FALSE)
   names(which) <- c(chrom)
   if (pairedEnd==TRUE){
     what <- c("qname","strand", "pos","isize")

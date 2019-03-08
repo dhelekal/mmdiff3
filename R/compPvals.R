@@ -219,7 +219,7 @@ compute.pvalues <- function(Counts, MMD, group1.ids, group2.ids, bw.group.ids,
     fit.Group2 <- locfit(D ~ N, data=data)
     # disp <- (exp(data$D) - exp(predict(fit.Group2,data$N)))^2
     # fit.Group2 <- lm(D ~ 1/N, data=data)
-    disp <- abs(data$D - predict.lm(fit.Group2,  data$N))
+    disp <- abs(data$D - predict(fit.Group2,  data$N)) #### use predict instead of predict.lm
     data <- cbind(data,disp = disp)
     # data <- data[disp>0,]
     fit.disp.Group2 <- locfit(disp ~ N, data=data)
