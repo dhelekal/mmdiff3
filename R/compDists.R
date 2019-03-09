@@ -156,9 +156,11 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     }
   }
   
-  if(dist.method = 'MMD2'{
+  if(dist.method=='MMD2'){
+    print(NegativeContrast)
     Meta$AnaData$NegativeContrast <- NegativeContrast
-  })
+    MD@MetaData <- Meta
+  }
   
   if (dist.method=='MMD'){
     KernelMatrix <- Meta$AnaData$KernelMatrix
@@ -327,8 +329,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
   KernelMatrix <- Meta$AnaData$KernelMatrix
   Flanks <- Meta$AnaData$Flanks
   NegativeContrast <- Meta$AnaData$NegativeContrast
-
-
+  print(NegativeContrast)
 
   Pos.C <- Reads(MD,'Center')
   PosA <- Pos.C[[i1]]
@@ -337,9 +338,17 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
   FlanksB <- Flanks[[i2]]
 
 
-  Data <- lapply(seq_len(length(PosA)),
+  if (dist.method=='MMD'){
+    Data <- lapply(seq_len(length(PosA)),
                  function(row) list('PosA'= c(PosA[[row]],FlanksA,Ls[row]+FlanksA),
                                     'PosB'= c(PosB[[row]],FlanksB,Ls[row]+FlanksB)))
+  }
+  
+  if (dist.method=='MMD2'){
+    Data <- lapply(seq_len(length(PosA)),
+                   function(row) list('PosA'= c(PosA[[row]]),
+                                      'PosB'= c(PosB[[row]])))
+  }
 
 
   D <- rep(NA,length(PosA))
@@ -351,7 +360,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       KS <- ks.test(Data$posA,Data$posB)
       D[j] <- KS$statistic
     } else if (dist.method=='MMD2'){
-      computeDist(Data$posA, Data$posB, 5000, NegativeContrast[[i1]], NegativeContrast[[i2]])
+      D[j] <- computeDist(Data[[j]]$PosA, Data[[j]]$PosB, 1000, NegativeContrast[[i1]], NegativeContrast[[i2]])
     }
   }
   return(D)

@@ -8,6 +8,9 @@
 
 #include "mmd.hpp"
 #include <tuple>
+#include <cmath>
+#include <iostream>
+#include <stdlib.h>
 
 namespace mmdiff3 {
     template<class T>
@@ -43,7 +46,7 @@ namespace mmdiff3 {
 #pragma omp parallel for collapse(2) \
         default(shared) \
         private(i,j) \
-        schedule(static, 100) \
+        schedule(dynamic, 100) \
         reduction(+:result)
 
         for(i=0; i < m; ++i){
@@ -62,6 +65,10 @@ namespace mmdiff3 {
             }
         }
 #endif
+        if(std::isnan(result)){
+            std::cout << "NaN Encountered";
+        }
+
         return result;
     }
 

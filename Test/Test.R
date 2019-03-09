@@ -14,10 +14,8 @@ DBA <- dba.analyze(DBA)
 #------------
 Peaks = dba.peakset(DBA,bRetrieve=TRUE)
 
-library("TxDb.Hsapiens.UCSC.hg38.knownGene")
+#library("TxDb.Hsapiens.UCSC.hg38.knownGene")
 library("BSgenome.Hsapiens.UCSC.hg38")
-
-
 
 library('MMDiff3')
 ExperimentData <- list(genome='BSgenome.Hsapiens.UCSC.hg38',
@@ -31,7 +29,7 @@ MMD <- setRegions(MMD, Peaks)
 MMD <- getPeakReads(MMD)
 MMD <- estimateFragmentCenters(MMD)
 MMD <- compHists(MMD)
-MMD <- compDists(MMD)
+MMD <- compDists(MMD, dist.method = "MMD2")
 MMD <- setContrast(MMD,contrast='byTissue')
 MMD1 <- compPvals(MMD)
 res <- reportResults(MMD1)
