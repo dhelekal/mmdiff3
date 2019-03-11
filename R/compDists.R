@@ -382,7 +382,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       D[j] <- KS$statistic
     } else if (dist.method=='MMD2'){
       
-      bounds <- c(0, 2*PeakBoundary+RWidth[j])
+      bounds <- c(PeakBoundary, 2*PeakBoundary+RWidth[j])
       D[j] <- computeDist(Data[[j]]$PosA,
                           Data[[j]]$PosB,
                           bounds, sigma,

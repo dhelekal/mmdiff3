@@ -15,10 +15,10 @@
 namespace mmdiff3 {
     template<class T>
     double mmd<T>::compute_mmd(std::vector<T> &x, std::vector<T> &y, kernel_function<T> &k) {
-        double p = kernel_sum(x, x, k, true), q = kernel_sum(y, y, k, true), pq = kernel_sum(x, y, k, false);
+        double p = kernel_sum(x, x, k, false), q = kernel_sum(y, y, k, false), pq = kernel_sum(x, y, k, false);
         size_t m = x.size();
         size_t n = y.size();
-        return (1. / (m * (m-1))) * p - (2. / (m * n)) * pq + (1. / (n * (n-1))) * q;
+        return (1. / (m * (m))) * p - (2. / (m * n)) * pq + (1. / (n * (n))) * q;
     }
 
     template<class T>
