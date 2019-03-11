@@ -14,11 +14,11 @@ CMAKE_ARGS += -DCMAKE_BUILD_TYPE=Debug \
           -DCMAKE_C_FLAGS="${C_FLAGS} ${C_FLAGS}" \
           -DCMAKE_INSTALL_PREFIX=../src
 all:
-	mkdir -p ../src-build;
-	cd ../src-build; \
-	${CMAKE} $(CMAKE_ARGS) ../src; \
-	make install
+	#mkdir -p ../src-build;
+	#cd ../src-build; \
+	#${CMAKE} $(CMAKE_ARGS) ../src; \
+	#make install
 
 clean:
-	rm -rf ../src-build
-	rm -rf ../inst/local
+	#rm -rf ../src-build
+	#rm -rf ../inst/local
