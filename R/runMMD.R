@@ -1,4 +1,4 @@
-computeDist <- function(ds1, ds2, bootstrap_n, n_background_1, n_background_2){ #####Call this. 
+computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_background_1, n_background_2){ #####Call this. 
   ###ds1, ds2 is data
   ###boot_strap is how subsamples to be passed to mmd
   ###n_background_1, n_background_2 how much contrast should be added
@@ -12,26 +12,20 @@ computeDist <- function(ds1, ds2, bootstrap_n, n_background_1, n_background_2){ 
   if (length(ds1)<2 | length(ds2)<2) {
     return(NA)
   }
-  
-  ds1_r <-rescale(ds1)
-  ds2_r <-rescale(ds2)
-  
-  #### estimate sigma here
-  sigma_est <- 0.01
   #### create joint, augument with noise
-  ds1_augumented <- createJoint(ds1_r, n_background_1*10)
-  ds2_augumented <- createJoint(ds2_r, n_background_2*10)
+  ds1_augumented <- createJoint(ds1, n_background_1, region_bounds)
+  ds2_augumented <- createJoint(ds2, n_background_2, region_bounds)
   
   sample1 <- ds1_augumented[sample(nrow(ds1_augumented), bootstrap_n, replace = TRUE), ]
   sample2 <- ds2_augumented[sample(nrow(ds2_augumented), bootstrap_n, replace = TRUE), ]
   
-  result <- runMMD(sample1, sample2, sigma_est)
+  result <- runMMD(sample1, sample2, region_bounds, sigma)
   
   return(result)
 }
 
-createJoint <- function(ds, n_background){
-  rand_noise <- runif(n_background, -1, 1)
+createJoint <- function(ds, n_background, region_bounds){
+  rand_noise <- floor(runif(n_background, region_bounds[1], region_bounds[2]))
   
   ds_fg <- data.frame(positions=ds, obs_type=1)
   ds_bg <- data.frame(positions=rand_noise, obs_type=0)
@@ -40,27 +34,29 @@ createJoint <- function(ds, n_background){
   return(ds_augumented)
 }
 
-runMMD <- function(joint_ds1, joint_ds2, sigma){
-  a1 = as.double(joint_ds1[[1]])
+runMMD <- function(joint_ds1, joint_ds2, region_bounds, sigma){
+  a1 = as.integer(joint_ds1[[1]])
   a2 = as.integer(joint_ds1[[2]])
   
-  b1 = as.double(joint_ds2[[1]]) 
+  b1 = as.integer(joint_ds2[[1]]) 
   b2 = as.integer(joint_ds2[[2]])
+  
+  minb = as.integer(region_bounds[1]) 
+  maxb = as.integer(max(c(max(a1), max(b1))))#region_bounds[2])
   
   d_sigma = as.double(sigma)
 
-  if(!(is.double(a1) || is.double(b1) || is.double(d_sigma)))
+  if(!(is.double(d_sigma)))
     stop("Double object")
   
-  if(!(is.integer(a2) || is.integer(b2)))
+  if(!(is.integer(a2) && 
+       is.integer(a1) && 
+       is.integer(b1) && 
+       is.integer(b2) && 
+       is.integer(minb) && 
+       is.integer(maxb)))
     stop("Integer object")
   
-  a<-.Call("jmmd", a1, a2, b1, b2, d_sigma)
+  a<-.Call("jmmd", a1, a2, b1, b2, minb, maxb, d_sigma)
   return(a)
-}
-
-rescale <- function(x){
-  minx <-min(x)
-  maxx <-max(x)
-  return((x-mean(x))/(maxx-minx))
 }

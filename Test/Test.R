@@ -1,6 +1,9 @@
 
 setwd('~/Edinburgh Biocourse/Trieste_Data/ChIP-Seq/')
 
+library(devtools)
+install("~/Documents/GitHub/mmdiff3/")
+
 library(DiffBind)
 #sampleSheet = "SampleSheetPromoters.csv"
 
@@ -33,6 +36,5 @@ MMD <- compDists(MMD, dist.method = "MMD2")
 MMD <- setContrast(MMD,contrast='byTissue')
 MMD1 <- compPvals(MMD)
 res <- reportResults(MMD1)
-
 
 plotPeak(MMD, Peak.id='241', plot.input = FALSE, whichPos="Center")

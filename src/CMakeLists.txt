@@ -32,7 +32,18 @@ else()
     message(STATUS "Failed to locate OpenMP, proceeding without")
 endif()
 
-set(SOURCES mmd.hpp kernel_function.hpp rbf_joint_kernel.hpp rbf_joint_kernel.cpp mmd.cpp mmdiff3.cpp R_init.cpp mmdiff3.hpp R_init.hpp)
+set(SOURCES
+        mmd.hpp
+        mmd.cpp
+        kernel_function.hpp
+        rbf_joint_kernel.hpp
+        rbf_joint_kernel.cpp
+        rbf_joint_discrete_kernel.hpp
+        rbf_joint_discrete_kernel.cpp
+        mmdiff3.hpp
+        mmdiff3.cpp
+        R_init.hpp
+        R_init.cpp)
 
 find_package(LibR REQUIRED)
 message(STATUS "Including Rlib directories ${LIBR_INCLUDE_DIRS}")

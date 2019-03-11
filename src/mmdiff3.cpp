@@ -14,23 +14,30 @@
 #include <stdlib.h>
 #include <tuple>
 #include <vector>
-#include "rbf_joint_kernel.hpp"
+
 #include "mmd.hpp"
+#include "rbf_joint_discrete_kernel.hpp"
 
 using namespace mmdiff3;
 
-SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP sigma) {
-        double *ra1 = REAL(a1);
+SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP min_b, SEXP max_b, SEXP sigma) {
+        int *ra1 = INTEGER(a1);
         int *ia2 = INTEGER(a2);
 
-        double *rb1 = REAL(b1);
+        int *rb1 = INTEGER(b1);
         int *ib2 = INTEGER(b2);
 
-        const double rsigma = REAL(sigma)[0];
-        auto ker = rbf_joint_kernel(rsigma);
+        auto iminb = INTEGER(min_b);
+        auto imaxb = INTEGER(max_b);
 
-        mmd<std::tuple<double, int> > run_mmd;
-        std::vector<std::tuple<double, int>> vec1, vec2;
+        size_t minb = *iminb;
+        size_t maxb = *imaxb;
+
+        const double rsigma = REAL(sigma)[0];
+        auto ker = rbf_joint_discrete_kernel(rsigma, minb, maxb);
+
+        mmd<std::tuple<int, int> > run_mmd;
+        std::vector<std::tuple<int, int>> vec1, vec2;
 
         for (int i = 0; i < length(a1); ++i) {
             vec1.emplace_back(std::make_tuple(ra1[i], ia2[i]));

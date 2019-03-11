@@ -99,18 +99,6 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     N <- median(Counts[,i]/width(Peaks)*PeakBoundary)
     Flanks[[i]] <- sample(PeakBoundary,N,replace=TRUE)
   }
-  
-  ### Mark Intensity
-  
-  NegativeContrast <- vector(mode='list',length=ncol(Counts))
-  names(NegativeContrast) <- colnames(Counts)
-  
-  for (i in 1:ncol(Counts)){
-    N <- median(Counts[,i]/width(Peaks)*PeakBoundary)
-    #### Yeah i dont know how to estimate N properly ATM @TODO
-    NegativeContrast[[i]] <- N
-  }
-  
   ###
 
   nSamples <- numSamples(MD)
@@ -157,9 +145,41 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
   }
   
   if(dist.method=='MMD2'){
-    print(NegativeContrast)
+    
+    message('preparing negative contrast...')
+    ### Mark Intensity
+    NegativeContrast <- vector(mode='list',length=ncol(Counts))
+    names(NegativeContrast) <- colnames(Counts)
+    for (i in 1:ncol(Counts)){
+      N <- median(Counts[,i]/width(Peaks))*width(Peaks)
+      #### Yeah i dont know how to estimate N properly ATM @TODO
+      NegativeContrast[[i]] <- N
+    }
+    
+    message('estimating sigma...')
+    Sigma <- matrix(0,numPeaksForSigma,nSamples )
+    colnames(Sigma) <- sampleIDs
+    
+    for (i in 1:nSamples){
+      C <- Counts[,i]
+      peak.ids <- which(C>quantile(C)[2]&C<=quantile(C)[4])
+      peak.ids <- sample(peak.ids, numPeaksForSigma)
+      R <- Pos.C[[i]][peak.ids]
+      for(j in 1:numPeaksForSigma){
+        Sigma[j,i] <- chooseSigma(R[[j]],R[[j]])
+      }
+    }
+    
+    summary(Sigma)
+    sigma <- median(as.vector(Sigma), na.rm = TRUE)
+    
+    RWidth <- width(Peaks)
+    
     Meta$AnaData$NegativeContrast <- NegativeContrast
+    Meta$AnaData$MMDKernelFinalSigma <- sigma
+    Meta$AnaData$RWidth <- RWidth
     MD@MetaData <- Meta
+    
   }
   
   if (dist.method=='MMD'){
@@ -329,7 +349,8 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
   KernelMatrix <- Meta$AnaData$KernelMatrix
   Flanks <- Meta$AnaData$Flanks
   NegativeContrast <- Meta$AnaData$NegativeContrast
-  print(NegativeContrast)
+  RWidth <- Meta$AnaData$RWidth
+  sigma <- Meta$AnaData$MMDKernelFinalSigma
 
   Pos.C <- Reads(MD,'Center')
   PosA <- Pos.C[[i1]]
@@ -360,7 +381,14 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       KS <- ks.test(Data$posA,Data$posB)
       D[j] <- KS$statistic
     } else if (dist.method=='MMD2'){
-      D[j] <- computeDist(Data[[j]]$PosA, Data[[j]]$PosB, 1000, NegativeContrast[[i1]], NegativeContrast[[i2]])
+      
+      bounds <- c(0, 2*PeakBoundary+RWidth[j])
+      D[j] <- computeDist(Data[[j]]$PosA,
+                          Data[[j]]$PosB,
+                          bounds, sigma,
+                          1000,
+                          NegativeContrast[[i1]],
+                          NegativeContrast[[i2]])
     }
   }
   return(D)

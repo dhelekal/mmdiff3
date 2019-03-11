@@ -2,8 +2,8 @@
 // Created by David Helekal on 2019-01-03.
 //
 
-#ifndef MMDIFF3_KERNEL_HPP
-#define MMDIFF3_KERNEL_HPP
+#ifndef MMDIFF3_rbf_joint_kernel_HPP
+#define MMDIFF3_rbf_joint_kernel_HPP
 
 #include <tuple>
 #include "kernel_function.hpp"

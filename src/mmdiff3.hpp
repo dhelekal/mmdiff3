@@ -8,6 +8,6 @@
 #include <R_ext/Rdynload.h>
 #include <Rinternals.h>
 extern "C" {
-SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP sigma);
+SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP min_b, SEXP max_b, SEXP sigma);
 }
 #endif //MMDIFF3_MMDIFF3_HPP

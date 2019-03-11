@@ -46,13 +46,21 @@ namespace mmdiff3 {
 #pragma omp parallel for collapse(2) \
         default(shared) \
         private(i,j) \
-        schedule(dynamic, 100) \
+        schedule(dynamic, 1000) \
         reduction(+:result)
 
         for(i=0; i < m; ++i){
             for(j=0; j < n; ++j){
                 double k_res;
-                (no_diag && i==j) ? (k_res = 0) : (k_res = k.compute_kernel(x[i], y[j]));
+
+                if (no_diag && i==j) {
+                    k_res = 0.0;
+                } else {
+                    k_res = k.compute_kernel(x[i], y[j]);
+                }
+
+                assert(!std::isnan(k_res));
+
                 result = result + k_res;
             }
         }
@@ -73,5 +81,6 @@ namespace mmdiff3 {
     }
 
     template class mmd<std::tuple<double, int>>;
+    template class mmd<std::tuple<int, int>>;
 }
 
