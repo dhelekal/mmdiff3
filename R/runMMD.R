@@ -42,7 +42,7 @@ runMMD <- function(joint_ds1, joint_ds2, region_bounds, sigma){
   b2 = as.integer(joint_ds2[[2]])
   
   minb = as.integer(region_bounds[1]) 
-  maxb = as.integer(max(c(max(a1), max(b1))))#region_bounds[2])
+  maxb = as.integer(region_bounds[2])#region_bounds[2])
   
   d_sigma = as.double(sigma)
 
