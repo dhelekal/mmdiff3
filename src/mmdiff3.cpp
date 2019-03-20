@@ -27,13 +27,13 @@ SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP min_b, SEXP max_b, SE
         int *rb1 = INTEGER(b1);
         int *ib2 = INTEGER(b2);
 
-        auto iminb = INTEGER(min_b);
-        auto imaxb = INTEGER(max_b);
-
-        size_t minb = *iminb;
-        size_t maxb = *imaxb;
-
+        auto iminb = INTEGER(min_b)[0];
+        auto imaxb = INTEGER(max_b)[0];
         const double rsigma = REAL(sigma)[0];
+
+        size_t minb = iminb;
+        size_t maxb = imaxb;
+
         auto ker = rbf_joint_discrete_kernel(rsigma, minb, maxb);
 
         mmd<std::tuple<int, int> > run_mmd;
@@ -48,8 +48,7 @@ SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP min_b, SEXP max_b, SE
         }
 
         SEXP ans = PROTECT(allocVector(REALSXP, 1));
-
-        REAL(ans)[0] = run_mmd.compute_mmd(vec1, vec2, ker);
+        ans = ScalarReal(run_mmd.compute_mmd(vec1, vec2, ker));
         UNPROTECT(1);
         return ans;
 }

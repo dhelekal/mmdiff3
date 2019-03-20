@@ -9,15 +9,24 @@ computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgroun
     return(NA)
   }
   
-  if (length(ds1)<2 | length(ds2)<2) {
+  if (length(ds1) < 2 | length(ds2)< 2) {
     return(NA)
   }
+  
+  if (bootstrap_n < 2) {
+    bootstrap_n1 = length(ds1)
+    bootstrap_n2 = length(ds2)
+  } else {
+    bootstrap_n1 = bootstrap_n
+    bootstrap_n2 = bootstrap_n
+  }
+  
   #### create joint, augument with noise
   ds1_augumented <- createJoint(ds1, n_background_1, region_bounds)
   ds2_augumented <- createJoint(ds2, n_background_2, region_bounds)
   
-  sample1 <- ds1_augumented[sample(nrow(ds1_augumented), bootstrap_n, replace = TRUE), ]
-  sample2 <- ds2_augumented[sample(nrow(ds2_augumented), bootstrap_n, replace = TRUE), ]
+  sample1 <- ds1_augumented[sample(nrow(ds1_augumented), bootstrap_n1, replace = TRUE), ]
+  sample2 <- ds2_augumented[sample(nrow(ds2_augumented), bootstrap_n2, replace = TRUE), ]
   
   result <- runMMD(sample1, sample2, region_bounds, sigma)
   
@@ -26,7 +35,7 @@ computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgroun
 
 createJoint <- function(ds, n_background, region_bounds){
   rand_noise <- floor(runif(n_background, region_bounds[1], region_bounds[2]))
-  
+
   ds_fg <- data.frame(positions=ds, obs_type=1)
   ds_bg <- data.frame(positions=rand_noise, obs_type=0)
 

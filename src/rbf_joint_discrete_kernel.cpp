@@ -24,21 +24,24 @@ namespace mmdiff3 {
         this->lookup = (double*) malloc(sizeof(double[max_dist+1]));
 
         size_t i = 0;
+        double val;
 
 #if defined(_OPENMP)
 #pragma omp parallel for \
         default(shared) \
-        private(i) \
+        private(i, val) \
         schedule(dynamic, 100)
 
         for(i=0; i <= max_dist; ++i) {
             assert(!std::isnan(sigma));
-            auto val = exp(-sigma * pow(i, 2));
-            this->lookup[i]=exp(val);
+            val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
+            this->lookup[i]=val;
         }
 #else
-        for(i=0; i <= m; ++i) {
-            this->lookup[i]=exp(-sigma * pow(i, 2));
+        for(i=0; i <= max_dist; ++i) {
+            assert(!std::isnan(sigma));
+            auto val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
+            this->lookup[i]=val;
         }
 #endif
 

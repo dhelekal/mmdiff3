@@ -152,7 +152,6 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     names(NegativeContrast) <- colnames(Counts)
     for (i in 1:ncol(Counts)){
       N <- median(Counts[,i]/width(Peaks))*width(Peaks)
-      #### Yeah i dont know how to estimate N properly ATM @TODO
       NegativeContrast[[i]] <- N
     }
     
@@ -172,6 +171,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     
     summary(Sigma)
     sigma <- median(as.vector(Sigma), na.rm = TRUE)
+    print(sigma)
     
     RWidth <- width(Peaks)
     
@@ -207,6 +207,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
       }
       summary(Sigma)
       sigma <- median(as.vector(Sigma),na.rm = TRUE)
+      print(sigma)
 
       ## ----------------
       ## 2. precompute Kernel matrix
@@ -382,13 +383,17 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       D[j] <- KS$statistic
     } else if (dist.method=='MMD2'){
       
-      bounds <- c(PeakBoundary, 2*PeakBoundary+RWidth[j])
+      if(NegativeContrast[[i1]][j] < 1 || NegativeContrast[[i2]][j] < 1) {
+        print("no contrast err" +i1 +" " + i2)
+      }
+      
+      bounds <- c(0, Ls[j]+PeakBoundary)
       D[j] <- computeDist(Data[[j]]$PosA,
                           Data[[j]]$PosB,
                           bounds, sigma,
-                          1000,
-                          NegativeContrast[[i1]],
-                          NegativeContrast[[i2]])
+                          1500,
+                          NegativeContrast[[i1]][j],
+                          NegativeContrast[[i2]][j])
     }
   }
   return(D)
