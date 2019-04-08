@@ -37,3 +37,4 @@ cmake-build-debug/
 .Rproj.user
 .RData
 .Rhistory
+src-build

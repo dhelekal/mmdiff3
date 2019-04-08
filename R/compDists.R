@@ -359,7 +359,6 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
   FlanksA <- Flanks[[i1]]
   FlanksB <- Flanks[[i2]]
 
-
   if (dist.method=='MMD'){
     Data <- lapply(seq_len(length(PosA)),
                  function(row) list('PosA'= c(PosA[[row]],FlanksA,Ls[row]+FlanksA),
@@ -371,7 +370,6 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
                    function(row) list('PosA'= c(PosA[[row]]),
                                       'PosB'= c(PosB[[row]])))
   }
-
 
   D <- rep(NA,length(PosA))
   for (j in seq_len(length(PosA))){
@@ -391,9 +389,9 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       D[j] <- computeDist(Data[[j]]$PosA,
                           Data[[j]]$PosB,
                           bounds, sigma,
-                          1500,
-                          NegativeContrast[[i1]][j],
-                          NegativeContrast[[i2]][j])
+                          0,
+                          NegativeContrast[[i1]][j]/2,
+                          NegativeContrast[[i2]][j]/2)
     }
   }
   return(D)

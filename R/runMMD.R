@@ -14,8 +14,8 @@ computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgroun
   }
   
   if (bootstrap_n < 2) {
-    bootstrap_n1 = length(ds1)
-    bootstrap_n2 = length(ds2)
+    bootstrap_n1 = (length(ds1)+n_background_1)*2
+    bootstrap_n2 = (length(ds2)+n_background_2)*2
   } else {
     bootstrap_n1 = bootstrap_n
     bootstrap_n2 = bootstrap_n

@@ -1,7 +1,7 @@
 RBIN := "${R_HOME}/bin/R"
 
 CXX := $(shell ${RBIN} CMD config CXX)
-CC := $(shell ${RBIN} CMD config C)
+CC := $(shell ${RBIN} CMD config CC)
 CXX_FLAGS := $(shell ${RBIN} CMD config CXXFLAGS)
 CPP_FLAGS := $(shell ${RBIN} CMD config CPPFLAGS)
 C_FLAGS := $(shell ${RBIN} CMD config CFLAGS)

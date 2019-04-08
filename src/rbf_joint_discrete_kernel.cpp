@@ -4,11 +4,11 @@
 
 #include "rbf_joint_discrete_kernel.hpp"
 #include <cmath>
+#include <cassert>
+#include <iostream>
 
 #ifdef _OPENMP
 #include <omp.h>
-#include <iostream>
-
 #endif
 
 
