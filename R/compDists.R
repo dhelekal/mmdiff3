@@ -65,12 +65,16 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
 
   PeakBoundary <- Meta$AnaData$PeakBoundary
   Peaks <- Regions(MD)
+  
+  print(length(Peaks))
 
   if (length(Peaks)<200){
     numPeaksForSigma <- length(Peaks)/2-1
-  } else
+  } else {
     numPeaksForSigma <- 100
-
+  }
+  
+  print(numPeaksForSigma)
  
   if (!strand.specific){
     Pos.C <- Reads(MD,'Center')
@@ -161,7 +165,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     
     for (i in 1:nSamples){
       C <- Counts[,i]
-      peak.ids <- which(C>quantile(C)[2]&C<=quantile(C)[4])
+      peak.ids <- which(C>quantile(C)[2]|C<=quantile(C)[4])
       peak.ids <- sample(peak.ids, numPeaksForSigma)
       R <- Pos.C[[i]][peak.ids]
       for(j in 1:numPeaksForSigma){
@@ -198,7 +202,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
 
       for (i in 1:nSamples){
         C <- Counts[,i]
-        peak.ids <- which(C>quantile(C)[2]&C<=quantile(C)[4])
+        peak.ids <- which(C>quantile(C)[2]|C<=quantile(C)[4])
         peak.ids <- sample(peak.ids, numPeaksForSigma)
         R <- Pos.C[[i]][peak.ids]
         for(j in 1:numPeaksForSigma){
@@ -380,9 +384,8 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       KS <- ks.test(Data$posA,Data$posB)
       D[j] <- KS$statistic
     } else if (dist.method=='MMD2'){
-      
       if(NegativeContrast[[i1]][j] < 1 || NegativeContrast[[i2]][j] < 1) {
-        print("no contrast err" +i1 +" " + i2)
+        message(paste("no contrast err",i1,"vs",i2))
       }
       
       bounds <- c(0, Ls[j]+PeakBoundary)

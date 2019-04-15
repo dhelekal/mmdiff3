@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(mmdiff3)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_VERBOSE_MAKEFILE 1)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")

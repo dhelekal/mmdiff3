@@ -18,6 +18,7 @@
 #include "mmd.hpp"
 #include "rbf_joint_discrete_kernel.hpp"
 
+
 using namespace mmdiff3;
 
 SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP min_b, SEXP max_b, SEXP sigma) {
@@ -47,9 +48,12 @@ SEXP compute_jmmd(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP min_b, SEXP max_b, SE
             vec2.emplace_back(std::make_tuple(rb1[i], ib2[i]));
         }
 
-        SEXP ans = PROTECT(allocVector(REALSXP, 1));
-        ans = ScalarReal(run_mmd.compute_mmd(vec1, vec2, ker));
+        SEXP result;
+        result = PROTECT(allocVector(REALSXP, 1));
+        double* rresult = REAL(result);
+        double mmd_res = run_mmd.compute_mmd(vec1, vec2, ker);
+        rresult[0] = mmd_res;
         UNPROTECT(1);
-        return ans;
+        return result;
 }
 #endif //MMDIFF3_MMDIFF_3_HPP

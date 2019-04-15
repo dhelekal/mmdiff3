@@ -5,6 +5,7 @@
 #include "rbf_joint_discrete_kernel.hpp"
 #include <cmath>
 #include <cassert>
+#include <cstdlib>
 #include <iostream>
 
 #ifdef _OPENMP

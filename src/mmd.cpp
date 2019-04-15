@@ -72,6 +72,7 @@ namespace mmdiff3 {
             }
         }
 #else
+        std::cout << "Parallel computation unavailable!";
         for(i=0; i < m; ++i){
             for(j=0; j < n; ++j){
                 double k_res;
