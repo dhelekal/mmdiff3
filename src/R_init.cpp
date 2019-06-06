@@ -8,7 +8,8 @@
 #include "mmdiff3.hpp"
 
 static const R_CallMethodDef callMethods[]  = {
-        {"jmmd", (DL_FUNC) &compute_jmmd, 7},
+        {"jmmd", (DL_FUNC) &compute_jmmd, 6},
+        {"kernel_lut", (DL_FUNC) &compute_LUT, 2},
         {NULL, NULL, 0}
 };
 

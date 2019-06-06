@@ -75,8 +75,6 @@ namespace mmdiff3 {
         std::cout << "Parallel computation unavailable!";
         for(i=0; i < m; ++i){
             for(j=0; j < n; ++j){
-                double k_res;
-
                 if (no_diag && i==j) {
                     k_res = 0.0;
                 } else {

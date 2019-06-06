@@ -16,36 +16,11 @@
 namespace mmdiff3 {
 
     rbf_joint_discrete_kernel::~rbf_joint_discrete_kernel() {
-        free(this->lookup);
     }
 
-    rbf_joint_discrete_kernel::rbf_joint_discrete_kernel(double sigma, size_t min_b, size_t max_b) {
-        this->sigma = sigma;
-        this->max_dist = abs((long)(max_b-min_b));
-        this->lookup = (double*) malloc(sizeof(double[max_dist+1]));
-
-        size_t i = 0;
-        double val;
-
-#if defined(_OPENMP)
-#pragma omp parallel for \
-        default(shared) \
-        private(i, val) \
-        schedule(dynamic, 100)
-
-        for(i=0; i <= max_dist; ++i) {
-            assert(!std::isnan(sigma));
-            val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
-            this->lookup[i]=val;
-        }
-#else
-        for(i=0; i <= max_dist; ++i) {
-            assert(!std::isnan(sigma));
-            auto val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
-            this->lookup[i]=val;
-        }
-#endif
-
+    rbf_joint_discrete_kernel::rbf_joint_discrete_kernel(double* LUT, size_t maxval) {
+        this->max_dist = maxval;
+        this->lookup = LUT;
     }
 
     inline double rbf_joint_discrete_kernel::compute_kernel(std::tuple<int, int> &a, std::tuple<int, int> &b) const {
@@ -66,5 +41,30 @@ namespace mmdiff3 {
         if (cat_a == cat_b) result = this->lookup[loc];
 
         return result;
+    }
+
+    void rbf_joint_discrete_kernel::compute_LUT(size_t maxval, double sigma, double* lut) {
+
+        size_t i = 0;
+        double val;
+
+#if defined(_OPENMP)
+#pragma omp parallel for \
+        default(shared) \
+        private(i, val) \
+        schedule(dynamic, 100)
+
+        for(i=0; i <= maxval; ++i) {
+            assert(!std::isnan(sigma));
+            val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
+            lut[i]=val;
+        }
+#else
+        for(i=0; i <= maxval; ++i) {
+            assert(!std::isnan(sigma));
+            val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
+            lut[i]=val;
+        }
+#endif
     }
 }

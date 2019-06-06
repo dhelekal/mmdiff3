@@ -177,11 +177,11 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     sigma <- median(as.vector(Sigma), na.rm = TRUE)
     print(sigma)
     
-    RWidth <- width(Peaks)
-    
+    L <- max(width(Peaks))+2*PeakBoundary
     Meta$AnaData$NegativeContrast <- NegativeContrast
     Meta$AnaData$MMDKernelFinalSigma <- sigma
-    Meta$AnaData$RWidth <- RWidth
+    Meta$AnaData$LUT<-buildMMDLUT(L, sigma)
+    Meta$AnaData$maxval<-L
     MD@MetaData <- Meta
     
   }
@@ -354,7 +354,6 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
   KernelMatrix <- Meta$AnaData$KernelMatrix
   Flanks <- Meta$AnaData$Flanks
   NegativeContrast <- Meta$AnaData$NegativeContrast
-  RWidth <- Meta$AnaData$RWidth
   sigma <- Meta$AnaData$MMDKernelFinalSigma
 
   Pos.C <- Reads(MD,'Center')
@@ -384,6 +383,8 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       KS <- ks.test(Data$posA,Data$posB)
       D[j] <- KS$statistic
     } else if (dist.method=='MMD2'){
+      maxval <- Meta$AnaData$maxval
+      lut <-Meta$AnaData$LUT
       if(NegativeContrast[[i1]][j] < 1 || NegativeContrast[[i2]][j] < 1) {
         message(paste("no contrast err",i1,"vs",i2))
       }
@@ -394,7 +395,10 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
                           bounds, sigma,
                           0,
                           NegativeContrast[[i1]][j]/2,
-                          NegativeContrast[[i2]][j]/2)
+                          NegativeContrast[[i2]][j]/2,
+                          maxval,
+                          lut
+                          )
     }
   }
   return(D)
