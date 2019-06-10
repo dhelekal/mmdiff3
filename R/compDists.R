@@ -156,7 +156,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     names(NegativeContrast) <- colnames(Counts)
     for (i in 1:ncol(Counts)){
       N <- median(Counts[,i]/width(Peaks))*width(Peaks)
-      NegativeContrast[[i]] <- N
+      NegativeContrast[[i]] <- N/5
     }
     
     message('estimating sigma...')
