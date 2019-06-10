@@ -175,8 +175,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     
     summary(Sigma)
     sigma <- median(as.vector(Sigma), na.rm = TRUE)
-    print(sigma)
-    
+
     L <- max(width(Peaks))+2*PeakBoundary
     Meta$AnaData$NegativeContrast <- NegativeContrast
     Meta$AnaData$MMDKernelFinalSigma <- sigma
