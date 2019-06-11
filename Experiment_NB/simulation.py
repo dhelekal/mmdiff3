@@ -34,8 +34,8 @@ def createConfoundingDrivers(confounding_vector, hist_num, mod_count, N, alpha, 
     
     confounding_distrib = tfd.Bernoulli(probs=confounding_vector) ###[mod_count]
     
-    nuc_draw = tf.reshape(nuc_distrib.sample(N), [N,1,hist_num]) ###[N x 1 x hist_num]
-    confounder_sample = tf.reshape(confounding_distrib.sample(N),[N, mod_count, 1]) ###[N x mod_count x 1]
+    nuc_draw = tf.expand_dims(nuc_distrib.sample(N), 1) ###[N x 1 x hist_num]
+    confounder_sample = tf.expand_dims(confounding_distrib.sample(N),2) ###[N x mod_count x 1]
     
     samples = tf.matmul(confounder_sample, nuc_draw) ###[N x mod_count x hist_num]
     
@@ -144,7 +144,7 @@ def run_simulation(
         
         for j in range(0, len(cluster_patterns[i])):
             conf_clust = tf.constant(cluster_patterns[i][j],dtype=tf.float32)
-            conf_clust = conf_clust*tfd.Beta(5.,0.8).sample([mod_count])
+            conf_clust = conf_clust*tfd.Beta(alpha_mixing_noise,beta_mixing_noise).sample([mod_count])
             clust, nc_dist, cd = create_cluster(conf_clust, mod_count, hist_num, N_cf, alpha, beta)
             with tf.name_scope('summaries'):
                 tf.summary.tensor_summary("Association "+str(i)+" Cluster "+str(j), cd.probs)

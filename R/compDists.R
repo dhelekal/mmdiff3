@@ -54,7 +54,7 @@
 
 compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
                       strand.specific=FALSE,
-                      run.parallel = FALSE, BPPARAM=bpparam()){
+                      run.parallel = FALSE, BPPARAM=bpparam(),background_intensity=0.2){
   verbose=1
   message('checking parameters...')
 
@@ -156,7 +156,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     names(NegativeContrast) <- colnames(Counts)
     for (i in 1:ncol(Counts)){
       N <- median(Counts[,i]/width(Peaks))*width(Peaks)
-      NegativeContrast[[i]] <- N/5
+      NegativeContrast[[i]] <- N*background_intensity
     }
     
     message('estimating sigma...')
