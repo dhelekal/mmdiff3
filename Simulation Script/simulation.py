@@ -139,6 +139,9 @@ def run_simulation(
     alpha = 0.3
     beta = 0.3
     alpha_beta = 1.
+    
+    clusts = []
+    clust_dists = []
         
     for i in range(0, n_patterns):
         for j in range(0, len(cluster_patterns[i])):
@@ -146,10 +149,15 @@ def run_simulation(
             conf_clust = conf_clust*tfd.Beta(5.,0.8).sample([mod_count])
             clust, nc_dist, cd = create_cluster(conf_clust, mod_count, hist_num, N_cf, alpha, beta)
             if j > 0:
-                clusts = tf.concat([clust,clusts],axis=0)
+                clusts = tf.concat([clust,clusts], axis = 0)
+                cd = tf.reshape(cd.probs,[1, -1])
+                clust_dists = tf.concat([clust_dists, cd], axis = 0)
             else:
+                cd = tf.reshape(cd.probs,[1, -1])
+                clust_dists = cd
                 clusts = clust
                 
+                        
         draws_bg = createNucleosomeDraws(mod_count, hist_num, N_bg)
         driver_bg, bg_distribs = createRandomDrivers(alpha_beta, alpha_beta, hist_num, mod_count, N_bg)
         draws_bg = flatten_reshape(mod_count, hist_num, N_bg, draws_bg)

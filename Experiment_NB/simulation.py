@@ -122,8 +122,8 @@ def run_simulation(
     
     if not os.path.exists(name+"/"):
         os.makedirs(name+"/")
-        jstr = json.dumps(cluster_patterns, indent=4, cls=NumpyEncoder)
         with open(name+"/patterns"+".json", "w") as text_file:
+            jstr = json.dumps(cluster_patterns, indent=4, cls=NumpyEncoder)
             print(jstr, file=text_file)
         
     else:
@@ -132,7 +132,7 @@ def run_simulation(
         
     session = tf.InteractiveSession()
     
-    mod_count = n_marks #Number of hist mods.
+    mod_count = n_marks #Number of hist mods
     hist_num = n_histones  #Number of nucleosomes 
     N_bg = coverage_per_histone_bg #Number of Draws
     N_cf = coverage_per_histone_fg #Number of Draws 
@@ -141,12 +141,15 @@ def run_simulation(
     alpha_beta = 1.
         
     for i in range(0, n_patterns):
+        
         for j in range(0, len(cluster_patterns[i])):
             conf_clust = tf.constant(cluster_patterns[i][j],dtype=tf.float32)
             conf_clust = conf_clust*tfd.Beta(5.,0.8).sample([mod_count])
             clust, nc_dist, cd = create_cluster(conf_clust, mod_count, hist_num, N_cf, alpha, beta)
+            with tf.name_scope('summaries'):
+                tf.summary.tensor_summary("Association "+str(i)+" Cluster "+str(j), cd.probs)
             if j > 0:
-                clusts = tf.concat([clust,clusts],axis=0)
+                clusts = tf.concat([clust,clusts],axis=1)
             else:
                 clusts = clust
                 
@@ -163,7 +166,8 @@ def run_simulation(
             os.makedirs(pattern_directory)
         
         for j in range(0, n_loc_per_matrix):
-            out = session.run({'bg':tf.transpose(bg_samples, [1,0]), 'fg':tf.transpose(clust, [1,0])})
+            merged = tf.summary.merge_all()
+            out = session.run({'bg':tf.transpose(bg_samples, [1,0]), 'fg':tf.transpose(clusts, [1,0])})
         
             bg_df_pd = pd.DataFrame({'position':out['bg'][:,0],'modification':out['bg'][:,1]})
             fg_df_pd = pd.DataFrame({'position':out['fg'][:,0],'modification':out['fg'][:,1]})
@@ -207,7 +211,7 @@ def main():
     patterns = []
         
     if os.path.exists(opts.pattern):
-        patters = json.load(open(opts.pattern,"r"))
+        patterns = json.load(open(opts.pattern,"r"))
     else:
         for i in range(0,conf['config']['n_patterns']):
             patterns.append(generate_pattern(conf['config']['n_modifications'], conf['cluster']['prob']))
