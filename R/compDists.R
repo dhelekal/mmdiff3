@@ -388,13 +388,13 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
         message(paste("no contrast err",i1,"vs",i2))
       }
       
-      bounds <- c(0, Ls[j]+PeakBoundary)
+      bounds <- c(0, Ls[j])
       D[j] <- computeDist(Data[[j]]$PosA,
                           Data[[j]]$PosB,
                           bounds, sigma,
                           0,
-                          NegativeContrast[[i1]][j]/2,
-                          NegativeContrast[[i2]][j]/2,
+                          NegativeContrast[[i1]][j],
+                          NegativeContrast[[i2]][j],
                           maxval,
                           lut
                           )

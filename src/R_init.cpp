@@ -10,6 +10,7 @@
 static const R_CallMethodDef callMethods[]  = {
         {"jmmd", (DL_FUNC) &compute_jmmd, 6},
         {"kernel_lut", (DL_FUNC) &compute_LUT, 2},
+        {"kernel_sum", (DL_FUNC) &compute_joint_kernel_sum, 6},
         {NULL, NULL, 0}
 };
 
