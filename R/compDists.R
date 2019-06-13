@@ -66,16 +66,12 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
   PeakBoundary <- Meta$AnaData$PeakBoundary
   Peaks <- Regions(MD)
   
-  print(length(Peaks))
-
   if (length(Peaks)<200){
     numPeaksForSigma <- length(Peaks)/2-1
   } else {
     numPeaksForSigma <- 100
   }
   
-  print(numPeaksForSigma)
- 
   if (!strand.specific){
     Pos.C <- Reads(MD,'Center')
     Counts <- Counts(MD)
@@ -210,7 +206,6 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
       }
       summary(Sigma)
       sigma <- median(as.vector(Sigma),na.rm = TRUE)
-      print(sigma)
 
       ## ----------------
       ## 2. precompute Kernel matrix
