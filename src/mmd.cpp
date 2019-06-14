@@ -93,6 +93,74 @@ namespace mmdiff3 {
         return result;
     }
 
+    template<class T>
+    double mmd<T>::kernel_sum_symmetric(std::vector<T> &x,
+                              kernel_function<T> &k,
+                              bool no_diag){
+
+
+        size_t m = x.size();
+
+        double diag = 0;
+        for (int l = 0; l < 0; ++l) {
+            diag += k.compute_kernel(x[l], x[l]);
+        }
+
+        double result = 0;
+        double partial_result = 0;
+        double k_res = 0;
+        size_t i = 0;
+        size_t j = 0;
+
+#if defined(_OPENMP)
+#pragma omp parallel for \
+        default(shared) \
+        private(i,j,k_res, partial_result) \
+        schedule(dynamic, 1000) \
+        reduction(+:result)
+
+        for(i=0; i < m; ++i){
+
+            partial_result = 0;
+            for(j=0; j < m; ++j){
+                if (no_diag && i==j) {
+                    k_res = 0.0;
+                } else {
+                    k_res = k.compute_kernel(x[i], x[j]);
+                }
+
+                assert(!std::isnan(k_res));
+                assert(k_res <= 1);
+                partial_result += k_res;
+            }
+            result += partial_result;
+        }
+#else
+        std::cout << "Parallel computation unavailable!";
+        for(i=0; i < m; ++i){
+
+            partial_result = 0;
+            for(j=0; j < m; ++j){
+                if (no_diag && i==j) {
+                    k_res = 0.0;
+                } else {
+                    k_res = k.compute_kernel(x[i], x[j]);
+                }
+
+                assert(!std::isnan(k_res));
+                assert(k_res <= 1);
+                partial_result += k_res;
+            }
+            result += partial_result;
+        }
+#endif
+        if(std::isnan(result)){
+            std::cout << "NaN Encountered";
+        }
+
+        return 2*result+diag;
+    }
+
     template class mmd<std::tuple<double, int>>;
     template class mmd<std::tuple<int, int>>;
 }

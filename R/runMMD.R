@@ -63,24 +63,28 @@ computeDist2 <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgrou
   sample1 <- ds1_augumented[sample(nrow(ds1_augumented), bootstrap_n1, replace = TRUE), ]
   sample2 <- ds2_augumented[sample(nrow(ds2_augumented), bootstrap_n2, replace = TRUE), ]
   
+  m = nrow(sample1)
+  n = nrow(sample2)
+  
   positive1 <- subset(sample1, obs_type==1)
   positive2 <- subset(sample2, obs_type==1)
   
   negative1 <- subset(sample1, obs_type==0)
   negative2 <- subset(sample2, obs_type==0)
   
-  kxx_p <-kernelSum
-  kyy_p <-kernelSum
-  kxy_p <-kernelSum
+  kxx_p <- kernelSum(positive1, positive1, maxval, lut)
+  kyy_p <- kernelSum(positive2, positive2, maxval, lut)
+  kxy_p <- kernelSum(positive1, positive2, maxval, lut)
   
-  kxx_n
-  kyy_n
-  kxy_n 
+  kxx_n <- nrow(negative1)^2
+  kyy_n <- nrow(negative2)^2
+  kxy_n <- nrow(negative1)*nrow(negative2)
   
+  result <- (1/(m^2))*(kxx_p+kxx_n)
+            +(1/(n^2))*(kyy_p+kyy_n)
+            -(2/(m*n))*(kxy_p+kxy_n)
   
-  result <- runMMD(sample1, sample2, maxval, lut)
-  
-  return(result)
+  return(sqrt(result))
 }
 
 createJoint <- function(ds, n_background, region_bounds){

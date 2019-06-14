@@ -22,6 +22,10 @@ namespace mmdiff3 {
                                  std::vector<T> &y,
                                  kernel_function<T> &k,
                                  bool no_diag = false);
+
+        inline double kernel_sum_symmetric(std::vector<T> &x,
+                                 kernel_function<T> &k,
+                                 bool no_diag = false);
     };
 }
 #endif //MMDIFF3_MMD_HPP
