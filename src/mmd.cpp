@@ -101,7 +101,7 @@ namespace mmdiff3 {
         size_t m = x.size();
 
         double diag = 0;
-        for (int l = 0; l < 0; ++l) {
+        for (size_t l = 0; l < m; ++l) {
             diag += k.compute_kernel(x[l], x[l]);
         }
 
@@ -121,7 +121,6 @@ namespace mmdiff3 {
         for(i=0; i < m; ++i){
 
             partial_result = 0;
-
             for(j=0; j < i; ++j){
                 if (no_diag && i==j) {
                     k_res = 0.0;
@@ -135,7 +134,6 @@ namespace mmdiff3 {
             }
 
             assert(!std::isnan(partial_result));
-
             result += partial_result;
         }
 #else
