@@ -7,6 +7,7 @@
 
 #include <tuple>
 #include <vector>
+#include <cassert>
 #include "kernel_function.hpp"
 
 namespace mmdiff3 {
@@ -15,11 +16,30 @@ namespace mmdiff3 {
 
         static void compute_LUT(size_t maxval, double sigma, double *lut);
 
-        double compute_kernel(std::tuple<int, int> &a, std::tuple<int, int> &b) const override;
-
         explicit rbf_joint_discrete_kernel(double *LUT, size_t maxval);
 
         ~rbf_joint_discrete_kernel();
+
+        inline double compute_kernel(std::tuple<int, int> &a, std::tuple<int, int> &b) const {
+            int pos_a;
+            int cat_a;
+
+            int pos_b;
+            int cat_b;
+
+            double result = 0.0;
+
+            std::tie(pos_a, cat_a) = a;
+            std::tie(pos_b, cat_b) = b;
+
+            if (cat_a == cat_b) {
+                size_t loc = abs(pos_a - pos_b);
+                assert(loc <= this->max_dist);
+                result = this->lookup[loc];
+            }
+
+            return result;
+        }
 
     private:
         size_t max_dist;

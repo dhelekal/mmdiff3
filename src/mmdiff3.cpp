@@ -9,6 +9,7 @@
 
 #include <tuple>
 #include <vector>
+#include <cassert>
 
 #include "mmd.hpp"
 #include "rbf_joint_discrete_kernel.hpp"

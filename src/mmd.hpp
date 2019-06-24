@@ -18,12 +18,13 @@ namespace mmdiff3 {
 
         double compute_mmd(std::vector<T> &x, std::vector<T> &y, kernel_function<T> &k);
 
-        inline double kernel_sum(std::vector<T> &x,
+        double kernel_sum(std::vector<T> &x,
                                  std::vector<T> &y,
                                  kernel_function<T> &k,
                                  bool no_diag = false);
 
-        inline double kernel_sum_symmetric(std::vector<T> &x,
+
+        double kernel_sum_symmetric(std::vector<T> &x,
                                            kernel_function<T> &k,
                                            bool no_diag = false);
     };

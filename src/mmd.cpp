@@ -11,6 +11,7 @@
 #include "mmd.hpp"
 #include <cmath>
 #include <iostream>
+#include <cassert>
 
 namespace mmdiff3 {
     template<class T>
