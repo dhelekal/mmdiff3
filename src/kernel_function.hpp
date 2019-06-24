@@ -7,6 +7,7 @@
 
 
 #include <tuple>
+
 namespace mmdiff3 {
     template<class T>
     class kernel_function {

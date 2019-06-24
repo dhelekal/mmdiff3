@@ -3,15 +3,14 @@
 //
 
 #ifdef _OPENMP
+
 #include <omp.h>
+
 #endif
 
 #include "mmd.hpp"
-#include <tuple>
 #include <cmath>
 #include <iostream>
-#include <stdlib.h>
-#include <cassert>
 
 namespace mmdiff3 {
     template<class T>
@@ -39,9 +38,9 @@ namespace mmdiff3 {
 
     template<class T>
     double mmd<T>::kernel_sum(std::vector<T> &x,
-            std::vector<T> &y,
-            kernel_function<T> &k,
-            bool no_diag) {
+                              std::vector<T> &y,
+                              kernel_function<T> &k,
+                              bool no_diag) {
         size_t m = x.size();
         size_t n = y.size();
 
@@ -53,13 +52,13 @@ namespace mmdiff3 {
 #if defined(_OPENMP)
 #pragma omp parallel for collapse(2) \
         default(shared) \
-        private(i,j,k_res) \
+        private(i, j, k_res) \
         schedule(dynamic, 1000) \
         reduction(+:result)
 
-        for(i=0; i < m; ++i){
-            for(j=0; j < n; ++j){
-                if (no_diag && i==j) {
+        for (i = 0; i < m; ++i) {
+            for (j = 0; j < n; ++j) {
+                if (no_diag && i == j) {
                     k_res = 0.0;
                 } else {
                     k_res = k.compute_kernel(x[i], y[j]);
@@ -86,7 +85,7 @@ namespace mmdiff3 {
             }
         }
 #endif
-        if(std::isnan(result)){
+        if (std::isnan(result)) {
             std::cout << "NaN Encountered";
         }
 
@@ -95,8 +94,8 @@ namespace mmdiff3 {
 
     template<class T>
     double mmd<T>::kernel_sum_symmetric(std::vector<T> &x,
-                              kernel_function<T> &k,
-                              bool no_diag){
+                                        kernel_function<T> &k,
+                                        bool no_diag) {
 
         size_t m = x.size();
 
@@ -114,15 +113,15 @@ namespace mmdiff3 {
 #if defined(_OPENMP)
 #pragma omp parallel for \
         default(shared) \
-        private(i,j,k_res, partial_result) \
+        private(i, j, k_res, partial_result) \
         schedule(dynamic, 30) \
         reduction(+:result)
 
-        for(i=0; i < m; ++i){
+        for (i = 0; i < m; ++i) {
 
             partial_result = 0;
-            for(j=0; j < i; ++j){
-                if (no_diag && i==j) {
+            for (j = 0; j < i; ++j) {
+                if (no_diag && i == j) {
                     k_res = 0.0;
                 } else {
                     k_res = k.compute_kernel(x[i], x[j]);
@@ -155,14 +154,17 @@ namespace mmdiff3 {
             result += partial_result;
         }
 #endif
-        if(std::isnan(result)){
+        if (std::isnan(result)) {
             std::cout << "NaN Encountered";
         }
 
-        return 2*result+diag;
+        return 2 * result + diag;
     }
 
-    template class mmd<std::tuple<double, int>>;
-    template class mmd<std::tuple<int, int>>;
+    template
+    class mmd<std::tuple<double, int>>;
+
+    template
+    class mmd<std::tuple<int, int>>;
 }
 

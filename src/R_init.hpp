@@ -7,6 +7,6 @@
 #ifndef MMDIFF3_R_INIT_HPP
 #define MMDIFF3_R_INIT_HPP
 extern "C" {
-    void R_init_mmdiff3(DllInfo *info);
+void R_init_mmdiff3(DllInfo *info);
 }
 #endif //MMDIFF3_R_INIT_HPP

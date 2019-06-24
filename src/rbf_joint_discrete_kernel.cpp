@@ -4,12 +4,10 @@
 
 #include "rbf_joint_discrete_kernel.hpp"
 #include <cmath>
-#include <cassert>
-#include <cstdlib>
 #include <iostream>
 
 #ifdef _OPENMP
-#include <omp.h>
+
 #endif
 
 
@@ -18,7 +16,7 @@ namespace mmdiff3 {
     rbf_joint_discrete_kernel::~rbf_joint_discrete_kernel() {
     }
 
-    rbf_joint_discrete_kernel::rbf_joint_discrete_kernel(double* LUT, size_t maxval) {
+    rbf_joint_discrete_kernel::rbf_joint_discrete_kernel(double *LUT, size_t maxval) {
         this->max_dist = maxval;
         this->lookup = LUT;
     }
@@ -44,7 +42,7 @@ namespace mmdiff3 {
         return result;
     }
 
-    void rbf_joint_discrete_kernel::compute_LUT(size_t maxval, double sigma, double* lut) {
+    void rbf_joint_discrete_kernel::compute_LUT(size_t maxval, double sigma, double *lut) {
 
         size_t i = 0;
         double val;
@@ -55,10 +53,10 @@ namespace mmdiff3 {
         private(i, val) \
         schedule(dynamic, 100)
 
-        for(i=0; i <= maxval; ++i) {
+        for (i = 0; i <= maxval; ++i) {
             assert(!std::isnan(sigma));
-            val = exp((-1/(2*pow(sigma,2))) * pow(i, 2));
-            lut[i]=val;
+            val = exp((-1 / (2 * pow(sigma, 2))) * pow(i, 2));
+            lut[i] = val;
         }
 #else
         for(i=0; i <= maxval; ++i) {

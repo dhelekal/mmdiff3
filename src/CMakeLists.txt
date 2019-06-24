@@ -12,25 +12,25 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 message(STATUS "The build directory is ${CMAKE_SOURCE_DIR}")
 
 find_package(OPENMP)
-if(OpenMP_FOUND)
+if (OpenMP_FOUND)
     message(STATUS "OpenMP Found")
 
     set(OpenMP_CXX_FLAGS "-Xclang -fopenmp")
     set(OpenMP_C_FLAGS "-Xclang -fopenmp")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
 
-    if(NOT TARGET OpenMP::OpenMP_CXX)
+    if (NOT TARGET OpenMP::OpenMP_CXX)
         add_library(OpenMP_TARGET INTERFACE)
         add_library(OpenMP::OpenMP_CXX ALIAS OpenMP_TARGET)
         target_compile_options(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
         find_package(Threads REQUIRED)
         target_link_libraries(OpenMP_TARGET INTERFACE Threads::Threads)
         target_link_libraries(OpenMP_TARGET INTERFACE ${OpenMP_CXX_FLAGS})
-    endif()
+    endif ()
     list(APPEND LINK_LIBRARIES OpenMP::OpenMP_CXX)
-else()
+else ()
     message(STATUS "Failed to locate OpenMP, proceeding without")
-endif()
+endif ()
 
 set(SOURCES
         mmd.hpp
@@ -47,7 +47,7 @@ set(SOURCES
 
 find_package(LibR REQUIRED)
 message(STATUS "Including Rlib directories ${LIBR_INCLUDE_DIRS}")
-include_directories( PRIVATE ${LIBR_INCLUDE_DIRS})
+include_directories(PRIVATE ${LIBR_INCLUDE_DIRS})
 
 add_library(mmdiff3 SHARED ${SOURCES})
 target_link_libraries(mmdiff3 PRIVATE ${LIBR_LIBRARIES} ${LINK_LIBRARIES})
@@ -55,9 +55,9 @@ target_link_libraries(mmdiff3 PRIVATE ${LIBR_LIBRARIES} ${LINK_LIBRARIES})
 set_target_properties(mmdiff3 PROPERTIES COMPILE_FLAGS "-ggdb")
 set_target_properties(mmdiff3 PROPERTIES PREFIX "")
 
-if(NOT WIN32) # Need to force .so on Mac, but Windows needs to be .dll
+if (NOT WIN32) # Need to force .so on Mac, but Windows needs to be .dll
     set_target_properties(mmdiff3 PROPERTIES SUFFIX ".so")
-    install(TARGETS mmdiff3 LIBRARY DESTINATION . )
-else(NOT WIN32)
-    install(TARGETS mmdiff3 RUNTIME DESTINATION . )
-endif(NOT WIN32)
+    install(TARGETS mmdiff3 LIBRARY DESTINATION .)
+else (NOT WIN32)
+    install(TARGETS mmdiff3 RUNTIME DESTINATION .)
+endif (NOT WIN32)
