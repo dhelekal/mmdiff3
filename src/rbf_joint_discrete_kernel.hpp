@@ -21,8 +21,6 @@ namespace mmdiff3 {
 
         ~rbf_joint_discrete_kernel();
 
-
-
     private:
         size_t max_dist;
         double *lookup;

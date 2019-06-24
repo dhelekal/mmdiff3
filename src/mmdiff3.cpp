@@ -69,7 +69,6 @@ SEXP compute_LUT(SEXP maxval, SEXP sigma) {
         return result;
 }
 
-
 SEXP compute_joint_kernel_sum(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP maxval, SEXP LUT) {
         int *ra1 = INTEGER(a1);
         int *ia2 = INTEGER(a2);
@@ -108,5 +107,37 @@ SEXP compute_joint_kernel_sum(SEXP a1, SEXP a2, SEXP b1, SEXP b2, SEXP maxval, S
         rresult[0] = mmd_res;
         UNPROTECT(1);
         return result;
+}
+
+SEXP compute_joint_kernel_sum_symmetric(SEXP a1, SEXP a2, SEXP maxval, SEXP LUT) {
+    int *ra1 = INTEGER(a1);
+    int *ia2 = INTEGER(a2);
+
+    double *lut = REAL(LUT);
+
+    auto imaxv = INTEGER(maxval)[0];
+
+    size_t maxv = imaxv;
+
+    auto ker = rbf_joint_discrete_kernel(lut, maxv);
+
+    mmd<std::tuple<int, int> > run_mmd;
+    std::vector<std::tuple<int, int>> vec1, vec2;
+
+    for (int i = 0; i < length(a1); ++i) {
+        vec1.emplace_back(std::make_tuple(ra1[i], ia2[i]));
+    }
+
+    SEXP result;
+    result = PROTECT(allocVector(REALSXP, 1));
+    double* rresult = REAL(result);
+
+    double mmd_res = run_mmd.kernel_sum_symmetric(vec1,
+                                        ker,
+                                        false);
+
+    rresult[0] = mmd_res;
+    UNPROTECT(1);
+    return result;
 }
 #endif //MMDIFF3_MMDIFF_3_HPP

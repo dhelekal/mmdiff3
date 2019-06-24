@@ -63,8 +63,8 @@ computeDist2 <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgrou
   sample1 <- ds1_augumented[sample(nrow(ds1_augumented), bootstrap_n1, replace = TRUE), ]
   sample2 <- ds2_augumented[sample(nrow(ds2_augumented), bootstrap_n2, replace = TRUE), ]
   
-  m = nrow(sample1)
-  n = nrow(sample2)
+  m = NROW(sample1)
+  n = NROW(sample2)
   
   positive1 <- subset(sample1, obs_type==1)
   positive2 <- subset(sample2, obs_type==1)
@@ -72,17 +72,15 @@ computeDist2 <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgrou
   negative1 <- subset(sample1, obs_type==0)
   negative2 <- subset(sample2, obs_type==0)
   
-  kxx_p <- kernelSum(positive1, positive1, maxval, lut)
-  kyy_p <- kernelSum(positive2, positive2, maxval, lut)
+  kxx_p <- kernelSumSymmetric(positive1, maxval, lut)
+  kyy_p <- kernelSumSymmetric(positive2, maxval, lut)
   kxy_p <- kernelSum(positive1, positive2, maxval, lut)
   
-  kxx_n <- nrow(negative1)^2
-  kyy_n <- nrow(negative2)^2
-  kxy_n <- nrow(negative1)*nrow(negative2)
+  kxx_n <- NROW(negative1)^2
+  kyy_n <- NROW(negative2)^2
+  kxy_n <- NROW(negative1)*NROW(negative2)
   
-  result <- (1/(m^2))*(kxx_p+kxx_n)
-            +(1/(n^2))*(kyy_p+kyy_n)
-            -(2/(m*n))*(kxy_p+kxy_n)
+  result <- (1/(m*m))*(kxx_p+kxx_n)+(1/(n*n))*(kyy_p+kyy_n)-(2/(m*n))*(kxy_p+kxy_n)
   
   return(sqrt(result))
 }
@@ -146,6 +144,25 @@ kernelSum <- function(joint_ds1, joint_ds2, maxVal, lut){
     stop("Integer object")
   
   a<-.Call("kernel_sum", a1, a2, b1, b2, maxVali, lutd)
+  return(a)
+}
+
+kernelSumSymmetric <- function(joint_ds1, maxVal, lut){
+  a1 = as.integer(joint_ds1[[1]])
+  a2 = as.integer(joint_ds1[[2]])
+
+  maxVali = as.integer(maxVal)
+  lutd = as.double(lut)
+  
+  if(!(is.double(lutd)))
+    stop("Double object")
+  
+  if(!(is.integer(a2) && 
+       is.integer(a1) && 
+       is.integer(maxVali)))
+    stop("Integer object")
+  
+  a<-.Call("kernel_sum_symmetric", a1, a2, maxVali, lutd)
   return(a)
 }
 

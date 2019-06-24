@@ -35,10 +35,11 @@ namespace mmdiff3 {
         std::tie(pos_a, cat_a) = a;
         std::tie(pos_b, cat_b) = b;
 
-        size_t loc = abs(pos_a - pos_b);
-        assert(loc <= this->max_dist);
-
-        if (cat_a == cat_b) result = this->lookup[loc];
+        if (cat_a == cat_b) {
+            size_t loc = abs(pos_a - pos_b);
+            assert(loc <= this->max_dist);
+            result = this->lookup[loc];
+        }
 
         return result;
     }

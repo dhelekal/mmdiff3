@@ -98,7 +98,6 @@ namespace mmdiff3 {
                               kernel_function<T> &k,
                               bool no_diag){
 
-
         size_t m = x.size();
 
         double diag = 0;
@@ -116,13 +115,14 @@ namespace mmdiff3 {
 #pragma omp parallel for \
         default(shared) \
         private(i,j,k_res, partial_result) \
-        schedule(dynamic, 1000) \
+        schedule(dynamic, 30) \
         reduction(+:result)
 
         for(i=0; i < m; ++i){
 
             partial_result = 0;
-            for(j=0; j < m; ++j){
+
+            for(j=0; j < i; ++j){
                 if (no_diag && i==j) {
                     k_res = 0.0;
                 } else {
@@ -133,6 +133,9 @@ namespace mmdiff3 {
                 assert(k_res <= 1);
                 partial_result += k_res;
             }
+
+            assert(!std::isnan(partial_result));
+
             result += partial_result;
         }
 #else
