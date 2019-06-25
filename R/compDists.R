@@ -54,7 +54,7 @@
 
 compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
                       strand.specific=FALSE,
-                      run.parallel = FALSE, BPPARAM=bpparam(),background_intensity=0.2){
+                      run.parallel = FALSE, BPPARAM=bpparam(), background_intensity=0.2, bootstrap_n=0){
   verbose=1
   message('checking parameters...')
 
@@ -387,7 +387,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       D[j] <- computeDist2(Data[[j]]$PosA,
                           Data[[j]]$PosB,
                           bounds, sigma,
-                          0,
+                          bootstrap_n,
                           NegativeContrast[[i1]][j],
                           NegativeContrast[[i2]][j],
                           maxval,
