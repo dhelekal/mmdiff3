@@ -174,6 +174,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
 
     L <- max(width(Peaks))+2*PeakBoundary
     Meta$AnaData$NegativeContrast <- NegativeContrast
+    Meta$AnaData$bootstrap_n <- bootstrap_n
     Meta$AnaData$MMDKernelFinalSigma <- sigma
     Meta$AnaData$LUT<-buildMMDLUT(L, sigma)
     Meta$AnaData$maxval<-L
@@ -348,6 +349,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
   KernelMatrix <- Meta$AnaData$KernelMatrix
   Flanks <- Meta$AnaData$Flanks
   NegativeContrast <- Meta$AnaData$NegativeContrast
+  bootstrap_n<-Meta$AnaData$bootstrap_n
   sigma <- Meta$AnaData$MMDKernelFinalSigma
 
   Pos.C <- Reads(MD,'Center')
