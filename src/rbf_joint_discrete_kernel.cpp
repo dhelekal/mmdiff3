@@ -6,7 +6,9 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _OPENMP
+#if defined(_OPENMP)
+
+#include <omp.h>
 
 #endif
 

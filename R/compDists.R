@@ -60,6 +60,14 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
 
   if (missing(MD))
     stop("DBAmmd object")
+  
+  
+  message('checking if OpenMP is available...')
+  if(isParallel()){
+    message('OpenMP AVAILABLE - Parallel computation ENABLED...')
+  } else {
+    message('OpenMP UNAVAILABLE - Parallel computation DISABLED...')
+  }
 
   Meta <- metaData(MD)
 

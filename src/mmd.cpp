@@ -2,7 +2,7 @@
 // Created by David Helekal on 2019-01-07.
 //
 
-#ifdef _OPENMP
+#if defined(_OPENMP)
 
 #include <omp.h>
 
@@ -72,7 +72,6 @@ namespace mmdiff3 {
             }
         }
 #else
-        std::cout << "Parallel computation unavailable!";
         for(i=0; i < m; ++i){
             for(j=0; j < n; ++j){
                 if (no_diag && i==j) {
@@ -137,7 +136,6 @@ namespace mmdiff3 {
             result += partial_result;
         }
 #else
-        std::cout << "Parallel computation unavailable!";
         for(i=0; i < m; ++i){
 
             partial_result = 0;

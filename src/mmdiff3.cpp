@@ -137,4 +137,19 @@ SEXP compute_joint_kernel_sum_symmetric(SEXP a1, SEXP a2, SEXP maxval, SEXP LUT)
     return result;
 }
 
+SEXP parallel_enabled(){
+    int out;
+#if defined(_OPENMP)
+    out = 1;
+#else
+    out = 0;
+#endif
+    SEXP result;
+    result = PROTECT(allocVector(LGLSXP ,1));
+    int *bresult = LOGICAL(result);
+    bresult[0] = out;
+    UNPROTECT(1);
+    return result;
+}
+
 #endif //MMDIFF3_MMDIFF_3_HPP

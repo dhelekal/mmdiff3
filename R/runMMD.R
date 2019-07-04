@@ -180,3 +180,8 @@ buildMMDLUT <- function(maxVal,sigma){
   lut <- .Call("kernel_lut", imax, dsigma) 
   return(lut)
 }
+
+isParallel <- function(){
+  result <- .Call("is_parallel") 
+  return(result)
+}

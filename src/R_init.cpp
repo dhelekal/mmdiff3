@@ -10,6 +10,7 @@ static const R_CallMethodDef callMethods[] = {
         {"kernel_lut",           (DL_FUNC) &compute_LUT,                        2},
         {"kernel_sum",           (DL_FUNC) &compute_joint_kernel_sum,           6},
         {"kernel_sum_symmetric", (DL_FUNC) &compute_joint_kernel_sum_symmetric, 4},
+        {"is_parallel",          (DL_FUNC) &parallel_enabled,                   0},
         {NULL, NULL,                                                            0}
 };
 
