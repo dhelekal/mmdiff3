@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
 project(mmdiff3)
+
+message("APPENDING ${CMAKE_SOURCE_DIR}/modules TO CMAKE_MODULE_PATH")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/modules")
+message("APPENDING ${PROJECT_SOURCE_DIR}/cmake/modules TO CMAKE_MODULE_PATH")
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
 message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
