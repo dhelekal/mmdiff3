@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 message(STATUS "The build directory is ${CMAKE_SOURCE_DIR}")
 
-find_package(OPENMP)
+find_package(OpenMP)
 if (OpenMP_FOUND)
     message(STATUS "OpenMP Found")
 
