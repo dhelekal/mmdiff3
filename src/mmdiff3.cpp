@@ -5,7 +5,7 @@
 #ifndef MMDIFF3_MMDIFF_3_CPP
 #define MMDIFF3_MMDIFF_3_CPP
 
-#import "mmdiff3.hpp"
+#include "mmdiff3.hpp"
 
 #include <tuple>
 #include <vector>
