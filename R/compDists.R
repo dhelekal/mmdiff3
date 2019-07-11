@@ -394,7 +394,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
       }
       
       bounds <- c(0, Ls[j])
-      D[j] <- computeDist2(Data[[j]]$PosA,
+      D[j] <- computeDist(Data[[j]]$PosA,
                           Data[[j]]$PosB,
                           bounds, sigma,
                           bootstrap_n,
