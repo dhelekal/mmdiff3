@@ -55,7 +55,7 @@ computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgroun
 }
 
 createJoint <- function(ds, n_background, region_bounds){
-  if (NROW(ds_fg)>0) {
+  if (NROW(ds)>0) {
     ds_fg <- data.frame(positions=ds, obs_type=1)
   } else {
     ds_fg <- data.frame()
