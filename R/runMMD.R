@@ -69,8 +69,8 @@ createJoint <- function(ds, n_background, region_bounds){
 }
 
 kernelSum <- function(joint_ds1, joint_ds2, maxVal, lut){
-  a1 <- as.integer(joint_ds1[[1]])
-  a2 <- as.integer(joint_ds1[[2]])
+  a1 <- as.integer(joint_ds1[["positions"]])
+  a2 <- as.integer(joint_ds1[["obs_type"]])
   
   b1 <- as.integer(joint_ds2[["positions"]]) 
   b2 <- as.integer(joint_ds2[["obs_type"]])
@@ -93,7 +93,6 @@ kernelSum <- function(joint_ds1, joint_ds2, maxVal, lut){
 }
 
 kernelSumSymmetric <- function(joint_ds1, maxVal, lut){
-  a1 <- as.integer(joint_ds1[[1]])
   a1 <- as.integer(joint_ds1[["positions"]])
   a2 <- as.integer(joint_ds1[["obs_type"]])
 
