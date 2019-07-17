@@ -9,7 +9,7 @@ computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgroun
     return(NA)
   }
   
-  if (length(ds1) < 2 | length(ds2)< 2) {
+  if ( ((length(ds1) < 2) & (length(ds2) < 2)) & ((n_background_1<2 )|(n_background_2<2)) ) {
     return(NA)
   }
   
@@ -72,8 +72,8 @@ kernelSum <- function(joint_ds1, joint_ds2, maxVal, lut){
   a1 <- as.integer(joint_ds1[[1]])
   a2 <- as.integer(joint_ds1[[2]])
   
-  b1 <- as.integer(joint_ds2[[1]]) 
-  b2 <- as.integer(joint_ds2[[2]])
+  b1 <- as.integer(joint_ds2[["positions"]]) 
+  b2 <- as.integer(joint_ds2[["obs_type"]])
   
   maxVali <- as.integer(maxVal)
   lutd <- as.double(lut)
@@ -94,7 +94,8 @@ kernelSum <- function(joint_ds1, joint_ds2, maxVal, lut){
 
 kernelSumSymmetric <- function(joint_ds1, maxVal, lut){
   a1 <- as.integer(joint_ds1[[1]])
-  a2 <- as.integer(joint_ds1[[2]])
+  a1 <- as.integer(joint_ds1[["positions"]])
+  a2 <- as.integer(joint_ds1[["obs_type"]])
 
   maxVali <- as.integer(maxVal)
   lutd <- as.double(lut)

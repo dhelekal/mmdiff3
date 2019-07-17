@@ -118,7 +118,7 @@ SEXP compute_joint_kernel_sum_symmetric(SEXP a1, SEXP a2, SEXP maxval, SEXP LUT)
     auto ker = rbf_joint_discrete_kernel(lut, maxv);
 
     mmd<std::tuple<int, int> > run_mmd;
-    std::vector<std::tuple<int, int>> vec1, vec2;
+    std::vector<std::tuple<int, int> > vec1, vec2;
 
     for (int i = 0; i < length(a1); ++i) {
         vec1.emplace_back(std::make_tuple(ra1[i], ia2[i]));
