@@ -55,7 +55,11 @@ computeDist <- function(ds1, ds2, region_bounds, sigma, bootstrap_n, n_backgroun
 }
 
 createJoint <- function(ds, n_background, region_bounds){
-  ds_fg <- data.frame(positions=ds, obs_type=1)
+  if (NROW(ds_fg)>0) {
+    ds_fg <- data.frame(positions=ds, obs_type=1)
+  } else {
+    ds_fg <- data.frame()
+  }
   
   if (n_background > 0) {
     rand_noise <- runif(n_background, min = region_bounds[1], max = region_bounds[2])
