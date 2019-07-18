@@ -152,7 +152,7 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     }
   }
   
-  if(dist.method=='MMD2'){
+  if(dist.method=='MMD2' | dist.method=='MMD2.s'){
     
     message('preparing negative contrast...')
     ### Mark Intensity
@@ -372,7 +372,7 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
                                     'PosB'= c(PosB[[row]],FlanksB,Ls[row]+FlanksB)))
   }
   
-  if (dist.method=='MMD2'){
+  if (dist.method=='MMD2' | dist.method=='MMD2.s'){
     Data <- lapply(seq_len(length(PosA)),
                    function(row) list('PosA'= c(PosA[[row]]),
                                       'PosB'= c(PosB[[row]])))
@@ -404,6 +404,23 @@ mmdWrapper <- function(Data,verbose=1,MD,dist.method) {
                           lut
                           )
     }
+  } else if (dist.method=='MMD2.s'){
+    maxval <- Meta$AnaData$maxval
+    lut <-Meta$AnaData$LUT
+    if(NegativeContrast[[i1]][j] < 1 || NegativeContrast[[i2]][j] < 1) {
+      message(paste("no contrast err",i1,"vs",i2))
+    }
+    
+    bounds <- c(0, Ls[j])
+    D[j] <- computeDist_stoch(Data[[j]]$PosA,
+                        Data[[j]]$PosB,
+                        bounds, sigma,
+                        bootstrap_n,
+                        NegativeContrast[[i1]][j],
+                        NegativeContrast[[i2]][j],
+                        maxval,
+                        lut
+    )
   }
   return(D)
 }
