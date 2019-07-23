@@ -178,9 +178,9 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     }
     
     summary(Sigma)
-    if (is.null(NULL)) {
-      message(paste0('Sigma not supplied, using estimated sigma: ', sigma))
+    if (is.null(sigma)) {
       sigma <- median(as.vector(Sigma), na.rm = TRUE)
+      message(paste0('Sigma not supplied, using estimated sigma: ', sigma))
     } else {
       message(paste0("Using supplied sigma: ", sigma))
     }
@@ -220,9 +220,9 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
       }
       summary(Sigma)
       
-      if (is.null(NULL)) {
-        message(paste0('Sigma not supplied, using estimated sigma: ', sigma))
+      if (is.null(sigma)) {
         sigma <- median(as.vector(Sigma), na.rm = TRUE)
+        message(paste0('Sigma not supplied, using estimated sigma: ', sigma))
       } else {
         message(paste0("Using supplied sigma: ", sigma))
       }
