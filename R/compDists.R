@@ -178,7 +178,12 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
     }
     
     summary(Sigma)
-    sigma <- median(as.vector(Sigma), na.rm = TRUE)
+    if (sigma == NULL) {
+      message(paste0('Sigma not supplied, using estimated sigma: ', sigma))
+      sigma <- median(as.vector(Sigma), na.rm = TRUE)
+    } else {
+      message(paste0("Using supplied sigma: ", sigma))
+    }
 
     L <- max(width(Peaks))+2*PeakBoundary
     Meta$AnaData$NegativeContrast <- NegativeContrast
@@ -214,7 +219,13 @@ compDists <- function(MD, dist.method='MMD',sigma=NULL,CompIDs=NULL,
         }
       }
       summary(Sigma)
-      sigma <- median(as.vector(Sigma),na.rm = TRUE)
+      
+      if (sigma == NULL) {
+        message(paste0('Sigma not supplied, using estimated sigma: ', sigma))
+        sigma <- median(as.vector(Sigma), na.rm = TRUE)
+      } else {
+        message(paste0("Using supplied sigma: ", sigma))
+      }
 
       ## ----------------
       ## 2. precompute Kernel matrix
